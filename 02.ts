@@ -1,10 +1,11 @@
 #!/usr/bin/env ts-node
 
-import { loadFromFile, sum } from "./lib";
+import { loadFromFile, product, sum } from "./lib";
 
 async function main() {
   const lines: string[] = await loadFromFile("02-input.txt");
   console.log(`Part 1: ${partOne(lines)}`);
+  console.log(`Part 2: ${partTwo(lines)}`);
 }
 
 function partOne(lines: string[]) {
@@ -12,6 +13,12 @@ function partOne(lines: string[]) {
   const setup = parseRound("12 red, 13 green, 14 blue");
   const possibleGames = games.filter(game => gameIsPossible(setup, game));
   return sum(possibleGames.map(game => game.id));
+}
+
+function partTwo(lines: string[]) {
+  const games = lines.map(lineToGame);
+  const minSetups = games.map(minSetupForGame);
+  return sum(minSetups.map(roundValue));
 }
 
 function lineToGame(line: string): Game {
@@ -58,6 +65,22 @@ function parseRound(roundStr: string): Round {
     round.set(color, n);
   });
   return round;
+}
+
+function minSetupForGame(game: Game): Round {
+  return new Map(
+    [Color.Red, Color.Green, Color.Blue].map((c) => [c, maxForColor(game, c)])
+  );
+}
+
+function maxForColor(game: Game, color: Color): number {
+  return Math.max(...game.rounds.map((r) => r.get(color) || 0));
+}
+
+function roundValue(round: Round): number {
+  return product(
+    [Color.Red, Color.Green, Color.Blue].map((c) => round.get(c) || 0)
+  );
 }
 
 enum Color { Red, Green, Blue };
