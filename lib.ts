@@ -36,3 +36,10 @@ export function repeat<A>(x: A, n: number): A[] {
   }
   return xs;
 }
+
+export function charIsNumeric(c: string) {
+  const zero = "0".charCodeAt(0);
+  const nine = "9".charCodeAt(0);
+  const cCode = c.charCodeAt(0);
+  return cCode >= zero && cCode <= nine;
+}

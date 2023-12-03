@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { loadFromFile, sum } from "./lib";
+import { charIsNumeric, loadFromFile, sum } from "./lib";
 
 async function main() {
   const lines: string[] = await loadFromFile("01-input.txt");
@@ -21,13 +21,6 @@ function partTwo(lines: string[]): number {
     findDigit(line, true) * 10 + findDigit(line, false)
   ));
   return sum(calibrations);
-}
-
-function charIsNumeric(c: string) {
-  const zero = "0".charCodeAt(0);
-  const nine = "9".charCodeAt(0);
-  const cCode = c.charCodeAt(0);
-  return cCode >= zero && cCode <= nine;
 }
 
 function findDigit(line: string, fromStart: boolean = true) {
