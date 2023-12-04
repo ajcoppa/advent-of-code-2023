@@ -1,6 +1,6 @@
 #!/usr/bin/env ts-node
 
-import { Direction, charIsNumeric, loadFromFile, product, sum } from "./lib";
+import { charIsNumeric, loadFromFile, product, sum } from "./lib";
 import { Coord, getAdjacentCoords, inBounds } from "./lib/Coord";
 
 async function main() {
@@ -90,6 +90,7 @@ function parseGearRatios(lines: string[]): Map<string, number[]> {
     } else {
       // non-numeric, so look at currentVal + symbol adjacency to determine whether to include
       if (currentVal.length > 0 && currentStarAdjacent && currentWhichStar !== null) {
+        // Use string for coords due to object equality
         const mapKey = `${currentWhichStar.x},${currentWhichStar.y}`;
         const existingGears = gearMap.get(mapKey);
         const value = parseInt(currentVal, 10);
