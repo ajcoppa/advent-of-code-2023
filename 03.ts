@@ -4,7 +4,7 @@ import { charIsNumeric, loadFromFile, product, sum } from "./lib";
 import { Coord, getAdjacentCoords, inBounds } from "./lib/Coord";
 
 async function main() {
-  const lines: string[] = await loadFromFile("03-example.txt");
+  const lines: string[] = await loadFromFile("03-input.txt");
   console.log(`Part 1: ${partOne(lines)}`);
   console.log(`Part 2: ${partTwo(lines)}`);
 }
