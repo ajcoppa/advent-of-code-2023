@@ -43,3 +43,12 @@ export function charIsNumeric(c: string) {
   const cCode = c.charCodeAt(0);
   return cCode >= zero && cCode <= nine;
 }
+
+export function chunk<A>(list: A[], chunkSize: number): A[][] {
+  let chunks: A[][] = [];
+  for (let i = 0; i < list.length; i += chunkSize) {
+    const chunk = list.slice(i, i + chunkSize);
+    chunks.push(chunk);
+  }
+  return chunks;
+}

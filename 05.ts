@@ -2,6 +2,8 @@
 
 import fs from "fs/promises";
 
+import { chunk, repeat } from "./lib";
+
 async function main() {
   const text: string = await fs.readFile("05-input.txt", {
     encoding: "utf-8",
@@ -19,11 +21,34 @@ async function main() {
   }
   const maps = parseMaps(text);
   console.log(`Part 1: ${partOne(seeds, maps)}`);
+  console.log(`Part 2: ${partTwo(seeds, maps)}`);
 }
 
 function partOne(seeds: number[], maps: SeedMap[]): number {
   const processedSeeds = seeds.map(seed => processSeed(seed, maps));
   return Math.min(...processedSeeds);
+}
+
+function partTwo(seeds: number[], maps: SeedMap[]): number {
+  const seedChunks = chunk(seeds, 2);
+  let minValue = Number.MAX_SAFE_INTEGER;
+
+  // brute force solution
+  for (let i = 0; i < seedChunks.length; i++) {
+    const chunk = seedChunks[i];
+    const seed = chunk[0];
+    const range = chunk[1];
+    for (let n = seed; n < seed + range; n++) {
+      if (n % 1000000 === 0) console.log(`evaluating for ${n}`);
+      const value = processSeed(n, maps);
+      if (value < minValue) {
+        console.log(`new min: ${value} for seed ${n}`);
+        minValue = value;
+      }
+    }
+  }
+
+  return minValue;
 }
 
 function processSeed(seed: number, maps: SeedMap[]): number {
