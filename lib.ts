@@ -52,3 +52,9 @@ export function chunk<A>(list: A[], chunkSize: number): A[][] {
   }
   return chunks;
 }
+
+export function zip<A>(one: A[], two: A[]): A[][] {
+  return one.map(function (elem, i) {
+    return [elem, two[i]];
+  });
+}
