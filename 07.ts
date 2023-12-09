@@ -6,9 +6,20 @@ async function main() {
   const lines: string[] = await loadFromFile("07-input.txt");
   const rounds = parseLines(lines);
   console.log(`Part 1: ${partOne(rounds)}`);
+  console.log(`Part 2: ${partTwo(rounds)}`);
 }
 
 function partOne(rounds: Round[]): number {
+  const scores = scoreHands(rounds);
+  return sum(scores);
+}
+
+function partTwo(rounds: Round[]): number {
+  const scores = scoreHands(rounds, true);
+  return sum(scores);
+}
+
+function scoreHands(rounds: Round[], jokers: boolean = false): number[] {
   const rankedHands = [
     fiveOfAKind,
     fourOfAKind,
@@ -17,19 +28,60 @@ function partOne(rounds: Round[]): number {
     twoPair,
     onePair,
     highCard,
-  ].map(f => rounds.filter(round => f(cardCounts(round.hand))) // group by hand type 
-   .sort((a, b) => {
-    // order based on earliest different card
-    for (let i = 0; i < a.hand.length; i++) {
-      const diff = b.hand[i] - a.hand[i];
-      if (diff !== 0) return diff;
+  ].map((f) => rounds.filter((round) => {
+      const hands = jokers ? replaceJokers(round.hand) : round.hand; 
+      return f(cardCounts(hands));
+    }) // group by hand type
+    .sort((a, b) => {
+      // order based on earliest different card
+      for (let i = 0; i < a.hand.length; i++) {
+        const diff = jokers ? jokerValue(b.hand[i]) - jokerValue(a.hand[i]) : b.hand[i] - a.hand[i];
+        if (diff !== 0) return diff;
+      }
+      // if we've reached the end, they're identical
+      return 0;
     }
-    // if we've reached the end, they're identical
-    return 0;
-  })).flat();
+  )).flat();
 
-  const scores = rankedHands.map((round, i) => round.bid * (rankedHands.length - i));
-  return sum(scores);
+  return rankedHands.map(
+    (round, i) => round.bid * (rankedHands.length - i)
+  );
+}
+
+function jokerValue(card: Card): number {
+  return card === Card.Jack ? -1 : card.valueOf();
+}
+
+function replaceJokers(hand: Card[]): Card[] {
+  const counts = cardCounts(hand);
+
+  const entries: Card[][] = [];
+  for (const [card, number] of counts) {
+    entries.push([card, number]);
+  }
+  // sort by card count then card value
+  entries.sort((a, b) => {
+    const countDiff = b[1] - a[1];
+    if (countDiff !== 0) {
+      return countDiff;
+    } else {
+      return jokerValue(b[0]) - jokerValue(a[0]);
+    }
+  });
+
+  let bestCard: Card;
+  if (entries[0][0] === Card.Jack && entries[0][1] === 5) {
+    // all jokers, baby!
+    bestCard = Card.Ace;
+  } else if (entries[0][0] === Card.Jack) {
+    // we have the most jacks of anything, so return the next card type
+    bestCard = entries[1][0];
+  } else {
+    // otherwise use the top scoring other card
+    bestCard = entries[0][0];
+  }
+
+  return hand.map(c => c === Card.Jack ? bestCard : c);
 }
 
 function fiveOfAKind(counts: CardCounts): boolean {
