@@ -4,12 +4,18 @@ import { loadFromFile, product, zip } from "./lib";
 
 async function main() {
   const lines: string[] = await loadFromFile("06-input.txt");
-  const races = parseLines(lines);
-  console.log(`Part 1: ${partOne(races)}`);
+  const racesOne = parseLines(lines);
+  console.log(`Part 1: ${partOne(racesOne)}`);
+  const raceTwo = parseLines(lines, true)[0];
+  console.log(`Part 2: ${partTwo(raceTwo)}`);
 }
 
 function partOne(races: Race[]): number {
   return product(races.map(winningCount));
+}
+
+function partTwo(race: Race): number {
+  return winningCount(race);
 }
 
 function winningCount(r: Race): number {
@@ -36,8 +42,8 @@ function winningCount(r: Race): number {
   return winCount;
 }
 
-function parseLines(lines: string[]): Race[] {
-  const [times, distances] = lines.map(parseRaceLine);
+function parseLines(lines: string[], stripSpaces = false): Race[] {
+  const [times, distances] = lines.map(line => stripSpaces ? parseSingleRace(line) : parseRaceLine(line));
   return zip(times, distances).map(raceArray => ({
     time: raceArray[0],
     distance: raceArray[1]
@@ -50,6 +56,15 @@ function parseRaceLine(line: string): number[] {
     .slice(1) // chop off label
     .filter(c => c !== "")
     .map(s => parseInt(s, 10));
+}
+
+function parseSingleRace(line: string): number[] {
+  return [parseInt(line
+    .split(":")[1]
+    .split("")
+    .filter(c => c !== " ")
+    .join(""),
+    10)];
 }
 
 type Race = {
