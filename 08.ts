@@ -10,8 +10,6 @@ async function main() {
 }
 
 function partOne(instructions: Instruction[], nodes: Map<string, Node<string>>): number {
-  console.log(instructions);
-  console.log(nodes);
   let current = "AAA", instructionIndex = 0, pathLength = 0;
   while (current != "ZZZ") {
     const instruction = instructions[instructionIndex];
