@@ -1,12 +1,14 @@
 #!/usr/bin/env ts-node
 
-import { loadFromFile } from "./lib";
+import { all, loadFromFile, lcmAll } from "./lib";
 
 async function main() {
   const lines: string[] = await loadFromFile("08-input.txt");
   const instructions = parseInstructions(lines[0]);
+  console.log(instructions.length);
   const nodes = parseNodes(lines.slice(1));
   console.log(`Part 1: ${partOne(instructions, nodes)}`);
+  console.log(`Part 2: ${partTwo(instructions, nodes)}`);
 }
 
 function partOne(instructions: Instruction[], nodes: Map<string, Node<string>>): number {
@@ -24,6 +26,40 @@ function partOne(instructions: Instruction[], nodes: Map<string, Node<string>>):
     if (instructionIndex >= instructions.length) instructionIndex = 0;
   }
   return pathLength;
+}
+
+function partTwo(instructions: Instruction[], nodes: Map<string, Node<string>>): number {
+  let paths: string[] = [];
+  for (const [k, v] of nodes) {
+    if (k.endsWith("A")) {
+      paths.push(k);
+    }
+  }
+
+  // map the counts required to get each path to end in Z
+  const counts = paths.map(path => {
+    let instructionIndex = 0, current = path, count = 0;
+    while (!current.endsWith("Z")) {
+      const instruction = instructions[instructionIndex];
+      const next = instruction === Instruction.Left
+        ? nodes.get(current)?.left
+        : nodes.get(current)?.right;
+      if (!next) {
+        console.error(`Couldn't parse value for ${instruction} and ${nodes.get(path)}`);
+        process.exit(1);
+      }
+
+      current = next;
+      count++;
+      instructionIndex++;
+      if (instructionIndex >= instructions.length) instructionIndex = 0;
+    }
+    return count;
+  });
+
+  // least-common multiple all of them to figure out where the various loops align
+  // this wouldn't work in the general case, but works for the input provided.
+  return lcmAll(counts);
 }
 
 function parseInstructions(line: string): Instruction[] {

@@ -58,3 +58,15 @@ export function zip<A>(one: A[], two: A[]): A[][] {
     return [elem, two[i]];
   });
 }
+
+export function gcd(a: number, b: number): number {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+export function lcm(a: number, b: number): number {
+  return (a / gcd(a, b)) * b;
+}
+
+export function lcmAll(xs: number[]): number {
+  return xs.reduce(lcm, 1);
+}
