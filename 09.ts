@@ -3,14 +3,20 @@
 import { loadFromFile, same, sum } from "./lib";
 
 async function main() {
-  const lines: string[] = await loadFromFile("09-example.txt");
+  const lines: string[] = await loadFromFile("09-input.txt");
   const sequences: number[][] = parseSequences(lines);
   console.log(`Part 1: ${partOne(sequences)}`);
+  console.log(`Part 2: ${partTwo(sequences)}`);
 }
 
 function partOne(sequences: number[][]): number {
   const triangles = sequences.map(triangleSequences);
   return sum(triangles.map(nextTriangleNumber));
+}
+
+function partTwo(sequences: number[][]): number {
+  const triangles = sequences.map(triangleSequences);
+  return sum(triangles.map(prevTriangleNumber));
 }
 
 function triangleSequences(sequence: number[]): number[][] {
@@ -37,6 +43,17 @@ function nextTriangleNumber(sequences: number[][]): number {
     sequence.push(nextNumber);
   }
   return sequences[0][sequences[0].length - 1];
+}
+
+function prevTriangleNumber(sequences: number[][]): number {
+  for (let seqIndex = sequences.length - 2; seqIndex >= 0; seqIndex--) {
+    const sequence = sequences[seqIndex];
+    const prevSequence = sequences[seqIndex + 1];
+    const prevNumber = prevSequence[0];
+    const nextNumber = sequence[0] - prevNumber;
+    sequence.unshift(nextNumber);
+  }
+  return sequences[0][0];
 }
 
 function parseSequences(lines: string[]): number[][] {
