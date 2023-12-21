@@ -29,6 +29,10 @@ export function product(xs: number[]): number {
   return xs.reduce((a, b) => a * b);
 }
 
+export function same<A>(xs: A[]): boolean {
+  return all(xs.map((x) => x === xs[0]));
+}
+
 export function repeat<A>(x: A, n: number): A[] {
   const xs: A[] = [];
   for (let i = 0; i < n; i++) {
