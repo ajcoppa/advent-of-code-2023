@@ -74,3 +74,9 @@ export function lcm(a: number, b: number): number {
 export function lcmAll(xs: number[]): number {
   return xs.reduce(lcm, 1);
 }
+
+export function uniquePairs<A>(xs: A[]): A[][] {
+  return xs.flatMap((x1, i) =>
+    xs.slice(i + 1).map((x2) => [x1, x2])
+  );
+}

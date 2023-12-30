@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
 import { identity, loadFromFile } from "./lib";
-import { Coord, inBounds } from "./lib/Coord";
+import { Coord, Grid, inBounds } from "./lib/Coord";
 
 async function main() {
   const lines: string[] = await loadFromFile("10-input.txt");
@@ -160,7 +160,5 @@ type Tile<A> = {
   allowed: AllowedDirections,
   object: A
 }
-
-type Grid<A> = A[][];
 
 main();
